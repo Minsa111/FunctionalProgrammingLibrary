@@ -4,8 +4,8 @@ currentUser = None
 
 users = {
     "admin" : "12345",
-    "user1" : "secretpass",
-    "user2" : "supersecret"
+    "user1" : "1",
+    "user2" : "2"
 }
 users_book= {}
 user_role = {
@@ -40,10 +40,17 @@ def borrowBook():
 
     for author, title in book.items():
         if ans == title:
-            users_book[(author,title)] = currentUser
-            borrowedBook()
-            break
+            for (b_author, b_title), borrower in users_book.items():
+                if b_author == author and b_title == title:
+                    print("Book already borrowed by", borrower)
+                    input("Press enter to continue...")
+                    break
+            else:
+                users_book[(author, title)] = currentUser
+                borrowedBook()
+                break
     normUser()
+
 
 def borrowedBook():
     print(f"Books that are borrowed by {currentUser}:\n")
@@ -51,6 +58,25 @@ def borrowedBook():
         if borrower==currentUser:
             print(f"{author} : {title}")
     input("Press enter to continue")
+    normUser()
+
+def returnBook():
+    print("Books borrowed by", currentUser + ":")
+    for (author, title), borrower in users_book.items():
+        if borrower == currentUser:
+            print(f"{author} : {title}")
+
+    book_to_return = input("Enter the book title to return: ")
+    for (author, title), borrower in users_book.items():
+        if borrower == currentUser and title == book_to_return:
+            del users_book[(author, title)]
+            print(f"You've returned the book: {author} : {title}")
+            input("Press enter to continue...")
+            normUser()
+            return
+
+    print("You don't have a book with that title.")
+    input("Press enter to continue...")
     normUser()
 
 def adminUser():
@@ -82,7 +108,7 @@ def normUser():
     if ans == 1:
         borrowBook()
     elif ans == 2:
-        usersBook()
+        borrowedBook()
     elif ans == 3:
         returnBook()
     elif ans == 4:
@@ -99,14 +125,18 @@ def login():
     password = input("Password: ")
     role = checkAcc(username, password)
 
-    if role == "admin":
-        currentUser = username
-        adminUser()
-    elif role == "user":
-        currentUser = username
-        normUser()
+    if username and password:  # Check if both username and password are provided
+        role = checkAcc(username, password)
+        if role == "admin":
+            currentUser = username
+            adminUser()
+        elif role == "user":
+            currentUser = username
+            normUser()
+        else:
+            print("Wrong username or password.")
     else:
-        print (role)
+        print("Please enter a valid username and password.")
 
 def checkAcc(username, password):
     if username in users and user_role[username] and password == users[username]:
