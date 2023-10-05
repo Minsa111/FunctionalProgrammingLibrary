@@ -27,6 +27,10 @@ def addBook():
     print(book)
     input("Press enter to continue...")
     adminUser()
+
+def checkBorrowedBook():
+    print(users_book)
+    adminUser()
     
 def checkData():
     print(book)
@@ -89,7 +93,7 @@ def adminUser():
     if ans == 1:
         addBook()
     elif ans == 2:
-        checkData()
+        checkBorrowedBook()
     elif ans == 3:
         currentUser = ""
         login()
