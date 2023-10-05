@@ -1,4 +1,4 @@
-# def checkAccount(user, password):
+# emptypush
 
 currentUser = None
 
